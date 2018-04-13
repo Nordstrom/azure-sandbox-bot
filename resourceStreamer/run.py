@@ -39,6 +39,7 @@ def get_service_principal_cred():
     return creds
 
 def main():
+    print("starting...")
     for id in SUBSCRIPTIONS:
         logging.debug("Current Subscription set to {0}".format(id))
 
