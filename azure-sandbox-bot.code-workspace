@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"workbench.colorTheme": "Visual Studio Dark",
+		"files.autoSave": "afterDelay",
+		"files.autoSaveDelay": 1000,
+		"azureFunctions.projectRuntime": "beta",
+		"azureFunctions.projectLanguage": "JavaScript",
+		"azureFunctions.templateFilter": "Verified",
+		"python.pythonPath": "C:\\Python36\\python.exe"
+	}
+}
