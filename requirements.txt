@@ -1,0 +1,3 @@
+azure-common
+azure-mgmt-resource
+azure-storage-queue
