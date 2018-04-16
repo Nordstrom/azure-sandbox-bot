@@ -12,6 +12,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../venv
 import requests
 from azure.mgmt.resource import ResourceManagementClient
 from azure.common.credentials import ServicePrincipalCredentials
+from azure.storage.queue import QueueService
 
 logging.basicConfig()
 logger = logging.getLogger()
@@ -73,6 +74,10 @@ def get_service_principal_cred():
     )
     return creds
 
+def send_to_queue():
+    queue = QueueService()
+
+    
 def main():
     print("starting...")
     for id in SUBSCRIPTIONS:
