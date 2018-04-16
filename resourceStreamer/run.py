@@ -78,7 +78,7 @@ def get_service_principal_cred():
 def send_to_queue(body):
 
     return_dict = {
-        "body": json.dumps(body),
+        "body": body,
         "headers": {
             "Content-Type": "application/json"
         }
