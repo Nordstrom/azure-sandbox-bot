@@ -89,18 +89,20 @@ def send_to_queue(body):
 
 def main():
     print("starting...")
+
+    resources_list = []
     for id in SUBSCRIPTIONS:
         logging.debug("Current Subscription set to {0}".format(id))
 
+        resourceGroups = []
         res = list_resource_groups(subscription_id=id)
-        resources_list = []
-
         for rg in res:
-            resources_list.append({"resource_id": rg["name"],
+            resourceGroups.append({"resource_id": rg["name"],
                                    "subscription": id})
+        
+        resources_list.append({id:resourceGroups})
 
-        resource_dict = {"resources": resources_list}
-
-        send_to_queue(resource_dict)
+    resource_dict = {"resources": resources_list}
+    send_to_queue(resource_dict)
 
 main()
