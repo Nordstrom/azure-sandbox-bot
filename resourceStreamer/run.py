@@ -1,6 +1,7 @@
 import os
 import logging
 import sys
+import json
 
 # update path to point to azure's app fabric to use venv for dependent modules.
 # - use the console tool
@@ -25,7 +26,7 @@ SUBSCRIPTIONS = os.getenv("subscription_list", ["54dd3907-ccd0-4338-963e-6a58a10
 AZURE_CLIENT_ID = os.getenv("AZURE_CLIENT_ID")
 AZURE_TENANT_ID = os.getenv("AZURE_TENANT_ID")
 SP_SECRET_URI = os.getenv("SP_SECRET_URI")
-
+AZURE_FUNCTION_OUTPUT_QUEUE = os.getenv("OUT_QUEUE")
 
 def list_resource_groups(subscription_id):
     creds = get_service_principal_cred()
@@ -74,10 +75,23 @@ def get_service_principal_cred():
     )
     return creds
 
-def send_to_queue():
-    queue = QueueService()
+def send_to_queue(resource_id, subscription_id):
 
-    
+    body_dict = {
+        "subscriptionId": subscription_id,
+        "resourceId": resource_id
+    }
+
+    return_dict = {
+        "body": json.dumps(body_dict),
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+    output = open(os.environ[AZURE_FUNCTION_OUTPUT_QUEUE], 'w')
+    output.write(json.dumps(return_dict))
+
+
 def main():
     print("starting...")
     for id in SUBSCRIPTIONS:
@@ -85,6 +99,6 @@ def main():
 
         res = list_resource_groups(subscription_id=id)
         for rg in res:
-            print(rg)
+            send_to_queue(subscription_id=id, resource_id=rg["name"])
 
 main()
