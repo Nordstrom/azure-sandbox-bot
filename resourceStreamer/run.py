@@ -13,7 +13,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../venv
 import requests
 from azure.mgmt.resource import ResourceManagementClient
 from azure.common.credentials import ServicePrincipalCredentials
-from azure.storage.queue import QueueService
+
 
 logging.basicConfig()
 logger = logging.getLogger()
@@ -26,7 +26,7 @@ SUBSCRIPTIONS = os.getenv("subscription_list", ["54dd3907-ccd0-4338-963e-6a58a10
 AZURE_CLIENT_ID = os.getenv("AZURE_CLIENT_ID")
 AZURE_TENANT_ID = os.getenv("AZURE_TENANT_ID")
 SP_SECRET_URI = os.getenv("SP_SECRET_URI")
-AZURE_FUNCTION_OUTPUT_QUEUE = os.getenv("OUT_QUEUE")
+AZURE_FUNCTION_OUTPUT_QUEUE = "myQueueItem"
 
 def list_resource_groups(subscription_id):
     creds = get_service_principal_cred()
@@ -75,15 +75,10 @@ def get_service_principal_cred():
     )
     return creds
 
-def send_to_queue(resource_id, subscription_id):
-
-    body_dict = {
-        "subscriptionId": subscription_id,
-        "resourceId": resource_id
-    }
+def send_to_queue(body):
 
     return_dict = {
-        "body": json.dumps(body_dict),
+        "body": json.dumps(body),
         "headers": {
             "Content-Type": "application/json"
         }
@@ -98,7 +93,14 @@ def main():
         logging.debug("Current Subscription set to {0}".format(id))
 
         res = list_resource_groups(subscription_id=id)
+        resources_list = []
+
         for rg in res:
-            send_to_queue(subscription_id=id, resource_id=rg["name"])
+            resources_list.append({"resource_id": rg["name"],
+                                   "subscription": id})
+
+        resource_dict = {"resources": resources_list}
+
+        send_to_queue(resource_dict)
 
 main()

@@ -11,8 +11,8 @@
       "type": "queue",
       "direction": "out",
       "name": "myQueueItem",
-      "queueName": "outqueue",
-      "connection": "js-queue-items"
+      "queueName": "sandbox-resources",
+      "connection": "AzureWebJobsDashboard"
     }
   ]
 }
