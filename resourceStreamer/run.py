@@ -2,6 +2,12 @@ import os
 import logging
 import sys
 
+# update path to point to azure's app fabric to use venv for dependent modules.
+# - use the console tool
+# -  python -m pip -U pip
+# - python -m virtualenv venv
+# - venv/Scripts/activate.bat
+# - python -m pip install -r requirements.txt
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../venv/Lib/site-packages')))
 import requests
 from azure.mgmt.resource import ResourceManagementClient
@@ -11,8 +17,10 @@ logging.basicConfig()
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+# list of sandbox subscriptions
 SUBSCRIPTIONS = os.getenv("subscription_list", ["54dd3907-ccd0-4338-963e-6a58a10266f2"])
-SECRET = os.getenv("AZURE_SECRET")
+
+# vars related to service principal which is the identity we use for azure cmds
 AZURE_CLIENT_ID = os.getenv("AZURE_CLIENT_ID")
 AZURE_TENANT_ID = os.getenv("AZURE_TENANT_ID")
 SP_SECRET_URI = os.getenv("SP_SECRET_URI")
@@ -29,16 +37,6 @@ def list_resource_groups(subscription_id):
         resource_group_list.append(_)
 
     return resource_group_list
-
-
-def main():
-    print("starting...")
-    for id in SUBSCRIPTIONS:
-        logging.debug("Current Subscription set to {0}".format(id))
-
-        res = list_resource_groups(subscription_id=id)
-        for rg in res:
-            print(rg)
 
 
 def get_kv_api_token():
@@ -73,6 +71,15 @@ def get_service_principal_cred():
         secret=get_sp_secret(),
         tenant=os.getenv('AZURE_TENANT_ID')
     )
-
     return creds
 
+def main():
+    print("starting...")
+    for id in SUBSCRIPTIONS:
+        logging.debug("Current Subscription set to {0}".format(id))
+
+        res = list_resource_groups(subscription_id=id)
+        for rg in res:
+            print(rg)
+
+main()
