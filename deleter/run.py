@@ -58,7 +58,7 @@ def delete_resource_group(subscription, rg, client):
 
 def main():
 
-    msg = open(os.environ['inputMessage']).read()
+    msg = open(os.environ['myQueueItem']).read()
     resource_list = msg["body"]["resources"]
     
     for sub in resource_list:
@@ -69,3 +69,5 @@ def main():
         subscription_id = sub.keys()[0]
         for resource_item in sub[subscription_id]:
             print("Would delete {0}".format(resource_item))
+
+main()
