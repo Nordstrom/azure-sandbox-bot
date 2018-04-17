@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+import json
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../venv/Lib/site-packages')))
 import requests
@@ -10,7 +11,7 @@ from azure.common.credentials import ServicePrincipalCredentials
 SP_SECRET_URI = os.getenv("SP_SECRET_URI")
 
 logging.basicConfig()
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 def get_kv_api_token():
@@ -53,21 +54,30 @@ def process_queue_item(msg, client):
 
 def delete_resource_group(subscription, rg, client):
 
-    client.resource_groups.delete()
+    client.resource_groups.delete(
+        resource_group_name=rg
+    )
 
 
 def main():
+    print("func MAIN called")
+    msg = json.loads(open(os.environ['myQueueItem']).read())
+    print(msg)
 
-    msg = open(os.environ['myQueueItem']).read()
-    resource_list = msg["body"]["resources"]
-    
+    if msg and "resources" in msg["body"].keys():
+        resource_list = msg["body"]["resources"]
+    else:
+        logger.info("No resources to proccess")
+
     for sub in resource_list:
+        subscription_id = str(sub.keys()[0])
+        print(type(subscription_id))
 
         creds = get_service_principal_cred()
-        client = ResourceManagementClient(credentials=creds, subscription_id=sub)
+        client = ResourceManagementClient(credentials=creds, subscription_id=subscription_id)
         
-        subscription_id = sub.keys()[0]
         for resource_item in sub[subscription_id]:
+            delete_resource_group(client=client, subscription=subscription_id, rg=resource_item["name"])
             print("Would delete {0}".format(resource_item))
 
 main()
