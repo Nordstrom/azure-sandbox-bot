@@ -97,7 +97,7 @@ def main():
         resourceGroups = []
         res = list_resource_groups(subscription_id=id)
         for rg in res:
-            if rg["name"].lower().contains("network"):
+            if "network" in rg["name"].lower():
                 logger.warn("Resource Group {0} appears to be a Network VNet".format(rg["name"]))
             else:
                 resourceGroups.append({"resource_id": rg["name"],
