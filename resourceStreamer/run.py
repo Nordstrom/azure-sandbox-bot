@@ -78,7 +78,7 @@ def get_service_principal_cred():
 def send_to_queue(body):
 
     return_dict = {
-        "body": body,
+        "body": {"resources": body},
         "headers": {
             "Content-Type": "application/json"
         }
@@ -97,12 +97,15 @@ def main():
         resourceGroups = []
         res = list_resource_groups(subscription_id=id)
         for rg in res:
-            resourceGroups.append({"resource_id": rg["name"],
-                                   "subscription": id})
+            if rg["name"].lower().contains("network"):
+                logger.warn("Resource Group {0} appears to be a Network VNet".format(rg["name"]))
+            else:
+                resourceGroups.append({"resource_id": rg["name"],
+                                    "subscription": id})
         
         resources_list.append({id:resourceGroups})
 
     resource_dict = {"resources": resources_list}
-    send_to_queue(resource_dict)
+    send_to_queue(resources_list)
 
 main()
