@@ -14,5 +14,16 @@ https://docs.microsoft.com/en-us/python/azure/?view=azure-python
 
 The solution utilizes a CICD pipeline on top of a Nordstrom org GitHub repo.  A push to the "dev" repo will kick of a deployment to the NonProd IEPC subscription.
 
+### Authentication
+This solution utilizes a collection of resources to allow the functions to allow for authentication.  
 
+#### Service Principal
+https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-application-objects
 
+A service principal has been created that allows for the solution to operate against the sandbox subscriptions.  This SP is scoped only to the sandbox subscription. 
+
+Azure Key Vault is used to store the SP secret.  This allows for a centralized and protected means of providing a management credential for a set of use cases. 
+https://docs.microsoft.com/en-us/azure/key-vault/key-vault-whatis
+
+Mananaged Service Identity.
+https://docs.microsoft.com/en-us/azure/active-directory/managed-service-identity/overview
