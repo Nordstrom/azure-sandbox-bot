@@ -1,3 +1,4 @@
+# function name : resourceDelete
 import os
 import sys
 import logging
@@ -77,7 +78,7 @@ def main():
         client = ResourceManagementClient(credentials=creds, subscription_id=subscription_id)
         
         for resource_item in sub[subscription_id]:
-            delete_resource_group(client=client, subscription=subscription_id, rg=resource_item["name"])
+            delete_resource_group(client=client, subscription=subscription_id, rg=resource_item["resource_id"])
             print("Would delete {0}".format(resource_item))
 
 main()
