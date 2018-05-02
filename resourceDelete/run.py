@@ -79,6 +79,6 @@ def main():
         
         for resource_item in sub[subscription_id]:
             delete_resource_group(client=client, subscription=subscription_id, rg=resource_item["resource_id"])
-            print("Would delete {0}".format(resource_item))
+            
 
 main()
